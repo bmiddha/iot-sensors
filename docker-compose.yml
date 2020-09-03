@@ -1,0 +1,45 @@
+version: "2"
+
+services:
+  mqtt:
+    image: eclipse-mosquitto:1.6
+    restart: unless-stopped
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - mosquitto-data:/mosquitto/data
+      - mosquitto-log:/mosquitto/log
+    networks:
+      - iot-net
+  influxdb:
+    image: influxdb:1.8
+    restart: unless-stopped
+    ports:
+      - "8086:8086"
+    volumes:
+      - influxdb:/var/lib/influxdb
+    networks:
+      - iot-net
+  telegraf:
+    image: telegraf:1.15
+    restart: unless-stopped
+    volumes:
+      - telegraf:/etc/telegraf
+    networks:
+      - iot-net
+  grafana:
+    image: grafana/grafana:7.1.5
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    networks:
+      - iot-net
+volumes:
+  influxdb:
+  telegraf:
+  mosquitto-log:
+  mosquitto-data:
+
+networks:
+  iot-net:
